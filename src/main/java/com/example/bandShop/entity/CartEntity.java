@@ -2,6 +2,7 @@ package com.example.bandShop.entity;
 
 import jakarta.persistence.*;
 
+import java.util.HashMap;
 import java.util.List;
 
 @Entity
@@ -11,6 +12,12 @@ public class CartEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private double TotalPrice;
+
+//    @ElementCollection
+//    @MapKey
+//    private HashMap<ProductEntity, Integer> products;
+
+
     private List<Integer> amounts;
 
     @OneToMany

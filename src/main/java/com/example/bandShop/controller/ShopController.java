@@ -1,6 +1,7 @@
 package com.example.bandShop.controller;
 
 import com.example.bandShop.entity.ShopEntity;
+import com.example.bandShop.exception.OrdersExcistException;
 import com.example.bandShop.exception.ShopAlredyExistException;
 import com.example.bandShop.exception.ShopNotFoundedException;
 import com.example.bandShop.service.ShopService;
@@ -17,10 +18,9 @@ public class ShopController {
 
 
     @PostMapping
-    public ResponseEntity createShop(@RequestBody ShopEntity shop,
-                                     @RequestHeader("admin_id") int admin_id){
+    public ResponseEntity createShop(@RequestBody ShopEntity shop){
         try {
-            shopService.create(shop, admin_id);
+            shopService.create(shop);
             return  ResponseEntity.ok("Магазин усешно создан");
         } catch(ShopAlredyExistException ex){
             return ResponseEntity.badRequest().body(ex.getMessage());
@@ -33,15 +33,6 @@ public class ShopController {
     public ResponseEntity deleteShop(@PathVariable int id){
         try {
             return  ResponseEntity.ok(shopService.delete(id));
-        } catch(Exception e){
-            return ResponseEntity.badRequest().body("Произошла ошибка");
-        }
-    }
-
-    @GetMapping("/orders")
-    public ResponseEntity getOrders(@RequestHeader("shop_id") int shop_id){
-        try {
-            return  ResponseEntity.ok(shopService.getOrders(shop_id));
         }catch(ShopNotFoundedException ex){
             return ResponseEntity.badRequest().body(ex.getMessage());
         } catch(Exception e){
@@ -49,14 +40,25 @@ public class ShopController {
         }
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity getOneShop(@RequestHeader("admin_id") int admin_id){
+    @GetMapping("/orders/{id}")
+    public ResponseEntity getOrders(@PathVariable int id){
         try {
-            return  ResponseEntity.ok(shopService.getOne(admin_id));
+            return  ResponseEntity.ok(shopService.getOrders(id));
+        }catch(ShopNotFoundedException ex){
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        } catch(Exception e){
+            return ResponseEntity.badRequest().body("Произошла ошибка" + e.getMessage());
+        }
+    }
+
+    @GetMapping("/find/{id}")
+    public ResponseEntity getOneShop(@PathVariable int id){
+        try {
+            return  ResponseEntity.ok(shopService.getOne(id));
         }catch(ShopNotFoundedException ex){
             return ResponseEntity.badRequest().body(ex.getMessage());
         }catch(Exception e){
-            return ResponseEntity.badRequest().body("Произошла ошибка");
+            return ResponseEntity.badRequest().body("Произошла ошибка"+ e.getMessage());
         }
     }
 
@@ -75,8 +77,18 @@ public class ShopController {
             return ResponseEntity.ok(shopService.updateShop(shop));
         } catch(ShopNotFoundedException ex){
             return ResponseEntity.badRequest().body(ex.getMessage());
+        }catch(OrdersExcistException exс){
+            return ResponseEntity.badRequest().body(exс.getMessage());
         }catch(Exception e){
             return ResponseEntity.badRequest().body("Произошла ошибка");
+        }
+    }
+    @GetMapping("/free")
+    public ResponseEntity getFree(){
+        try {
+            return  ResponseEntity.ok(shopService.getFree());
+        } catch(Exception e){
+            return ResponseEntity.badRequest().body("Произошла ошибка"+ e.getMessage());
         }
     }
 }

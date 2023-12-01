@@ -1,13 +1,7 @@
 package com.example.bandShop.service;
 
-import com.example.bandShop.entity.CartEntity;
-import com.example.bandShop.entity.OrderEntity;
-import com.example.bandShop.entity.ShopEntity;
-import com.example.bandShop.entity.UserEntity;
-import com.example.bandShop.exception.CartEmptyException;
-import com.example.bandShop.exception.OrderNotFoundedException;
-import com.example.bandShop.exception.ShopNotFoundedException;
-import com.example.bandShop.exception.UserNotFoundException;
+import com.example.bandShop.entity.*;
+import com.example.bandShop.exception.*;
 import com.example.bandShop.model.Order;
 import com.example.bandShop.repository.CartRepo;
 import com.example.bandShop.repository.OrderRepo;
@@ -30,7 +24,7 @@ public class OrderService {
 
 
 
-    public OrderEntity createOrder(OrderEntity order,int user_id,int shop_id) throws UserNotFoundException, ShopNotFoundedException, CartEmptyException {
+    public OrderEntity createOrder(OrderEntity order,int user_id,int shop_id) throws UserNotFoundException, ShopNotFoundedException, CartEmptyException, ProductNotEnoughException {
         CartEntity cart = cartRepo.findByUserId(user_id);
         if (cart != null){
             throw new UserNotFoundException("Карзина не найдена");
@@ -42,6 +36,11 @@ public class OrderService {
         if(shop == null)
             throw  new ShopNotFoundedException("Магазин не найден");
         UserEntity user = userRepo.findById(user_id).get();
+        int i;
+        for(i = 0; i < cart.getPrducts().size(); i++){
+            if(cart.getPrducts().get(i).getStrorage() < cart.getAmounts().get(i))
+                throw new ProductNotEnoughException("На складе не достаточно продуктов");
+        }
         order.setShop(shop);
         order.setCart(cart);
         user.getOrderHistory().add(order);
@@ -60,6 +59,8 @@ public class OrderService {
         if(orderRepo.findById(order.getId()).isPresent())
             throw new OrderNotFoundedException("Заказ не найден");
         order.setComplitied(status);
+        order.getShop().getOrders().remove(order);
+        shopRepo.save(order.getShop());
         orderRepo.save(order);
         return Order.toModel(order);
     }

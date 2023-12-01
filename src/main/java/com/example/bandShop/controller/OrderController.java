@@ -30,6 +30,8 @@ public class OrderController {
         }
         catch(ShopNotFoundedException exc){
             return ResponseEntity.badRequest().body(exc.getMessage());
+        } catch(ProductNotEnoughException excep){
+            return ResponseEntity.badRequest().body(excep.getMessage());
         }catch(Exception e){
             return ResponseEntity.badRequest().body("Произошла ошибка");
         }

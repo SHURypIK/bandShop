@@ -8,6 +8,8 @@ public class Shop {
     private String address;
     private String workTime;
     private  String phone;
+    private String admin;
+
 
     public static Shop toModel(ShopEntity entity){
         Shop model = new Shop();
@@ -15,7 +17,17 @@ public class Shop {
         model.setPhone(entity.getPhone());
         model.setId(entity.getId());
         model.setWorkTime(entity.getWorkTime());
+        if(entity.getAdmin() != null)
+            model.setAdmin(entity.getAdmin().getRole() + " " +entity.getAdmin().getId());
         return model;
+    }
+
+    public String getAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(String admin) {
+        this.admin = admin;
     }
 
     public Shop() {

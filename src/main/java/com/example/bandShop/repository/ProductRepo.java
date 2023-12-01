@@ -5,4 +5,6 @@ import org.springframework.data.repository.CrudRepository;
 
 
 public interface ProductRepo extends CrudRepository<ProductEntity,String> {
+
+    ProductEntity findByTitle(String title);
 }

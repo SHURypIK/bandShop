@@ -7,13 +7,13 @@ import java.util.HashMap;
 public class Cart {
 
     private double TotalPrice;
-    private HashMap<Product, Integer> products;
+    private HashMap<ProductCard, Integer> products;
 
 
     public static Cart toModel(CartEntity entity){
         Cart model = new Cart();
         for(int i = 0; i< entity.getPrducts().size(); i++)
-            model.products.put(Product.toModel(entity.getPrducts().get(i)), entity.getAmounts().get(i));
+            model.products.put(ProductCard.toModel(entity.getPrducts().get(i)), entity.getAmounts().get(i));
         model.setTotalPrice(entity.getTotalPrice());
         return model;
     }
@@ -30,11 +30,11 @@ public class Cart {
         TotalPrice = totalPrice;
     }
 
-    public HashMap<Product, Integer> getProducts() {
+    public HashMap<ProductCard, Integer> getProducts() {
         return products;
     }
 
-    public void setProducts(HashMap<Product, Integer> products) {
+    public void setProducts(HashMap<ProductCard, Integer> products) {
         this.products = products;
     }
 }

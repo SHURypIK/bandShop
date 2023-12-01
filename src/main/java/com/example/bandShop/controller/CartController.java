@@ -24,6 +24,8 @@ public class CartController {
             return  ResponseEntity.ok(cartServise.addProductToCart(user_id, product_id));
         } catch(ProductAlreadyExistException ex){
             return ResponseEntity.badRequest().body(ex.getMessage());
+        }catch(ProductNotFoundedException exce){
+            return ResponseEntity.badRequest().body(exce.getMessage());
         }catch(UserNotFoundException exc){
             return ResponseEntity.badRequest().body(exc.getMessage());
         }catch(Exception e){
@@ -46,7 +48,7 @@ public class CartController {
     public ResponseEntity deleteProductToCart(@RequestHeader("user_id") int user_id,
                                               @RequestHeader("product_id") String product_id){
         try {
-            return  ResponseEntity.ok(cartServise.deleteProductToCart(user_id, product_id));
+            return  ResponseEntity.ok(cartServise.deleteProductFromCart(user_id, product_id));
         }catch(UserNotFoundException exc){
             return ResponseEntity.badRequest().body(exc.getMessage());
         }catch(Exception e){

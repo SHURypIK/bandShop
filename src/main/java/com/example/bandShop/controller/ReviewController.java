@@ -4,7 +4,9 @@ package com.example.bandShop.controller;
 
 import com.example.bandShop.entity.ReviewEntity;
 import com.example.bandShop.exception.ProductAlreadyExistException;
+import com.example.bandShop.exception.ProductNotFoundedException;
 import com.example.bandShop.exception.ReviewNotFoundedException;
+import com.example.bandShop.exception.UserNotFoundException;
 import com.example.bandShop.service.ReviewServise;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,9 +25,13 @@ public class ReviewController {
                                        @RequestHeader("product_id") String product_id){
         try {
             reviewServise.createReview(review, user_id, product_id);
-            return  ResponseEntity.ok("Продукт успешно добавлен");
+            return  ResponseEntity.ok("Отзыв успешно добавлен");
         } catch(ProductAlreadyExistException ex){
             return ResponseEntity.badRequest().body(ex.getMessage());
+        }catch(ProductNotFoundedException exc){
+            return ResponseEntity.badRequest().body(exc.getMessage());
+        }catch(UserNotFoundException exce){
+            return ResponseEntity.badRequest().body(exce.getMessage());
         }catch(Exception e){
             return ResponseEntity.badRequest().body("Произошла ошибка");
         }
@@ -36,6 +42,8 @@ public class ReviewController {
                                         @RequestHeader("product_id") String product_id){
         try {
             return  ResponseEntity.ok(reviewServise.delete(user_id, product_id));
+        }catch(ReviewNotFoundedException ex){
+            return ResponseEntity.badRequest().body(ex.getMessage());
         } catch(Exception e){
             return ResponseEntity.badRequest().body("Произошла ошибка");
         }
@@ -70,6 +78,8 @@ public class ReviewController {
     public ResponseEntity getReviewsByUser(@RequestHeader("user_login") String user_login){
         try {
             return ResponseEntity.ok(reviewServise.getReviewsByUser(user_login));
+        }catch(UserNotFoundException ex){
+            return ResponseEntity.badRequest().body(ex.getMessage());
         } catch(Exception e){
             return ResponseEntity.badRequest().body("Произошла ошибка");
         }
@@ -79,8 +89,10 @@ public class ReviewController {
     public ResponseEntity getReviewsByProduct(@RequestHeader("product_title") String product_title){
         try {
             return ResponseEntity.ok(reviewServise.getReviewsByProduct(product_title));
+        } catch(ProductNotFoundedException ex){
+            return ResponseEntity.badRequest().body(ex.getMessage());
         } catch(Exception e){
-            return ResponseEntity.badRequest().body("Произошла ошибка");
+            return ResponseEntity.badRequest().body("Произошла ошибка" + e.getMessage());
         }
     }
 }

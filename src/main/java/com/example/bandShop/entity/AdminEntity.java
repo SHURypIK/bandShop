@@ -13,6 +13,11 @@ public class AdminEntity {
     private String password;
     private String role;
 
+
+
+    @OneToOne
+    @JoinColumn(name = "shopId")
+    private  ShopEntity shop;
     public ShopEntity getShop() {
         return shop;
     }
@@ -20,11 +25,6 @@ public class AdminEntity {
     public void setShop(ShopEntity shop) {
         this.shop = shop;
     }
-
-    @OneToOne
-    @JoinColumn(name = "shopId")
-    private  ShopEntity shop;
-
     public int getId() {
         return id;
     }

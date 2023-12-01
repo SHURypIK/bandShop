@@ -24,7 +24,7 @@ public class ProductController {
         } catch(ProductAlreadyExistException ex){
             return ResponseEntity.badRequest().body(ex.getMessage());
         }catch(Exception e){
-            return ResponseEntity.badRequest().body("Произошла ошибка");
+            return ResponseEntity.badRequest().body("Произошла ошибка" + e.getMessage());
         }
     }
 
@@ -33,6 +33,8 @@ public class ProductController {
     public ResponseEntity deleteProduct(@PathVariable String id){
         try {
             return  ResponseEntity.ok(productServise.delete(id));
+        } catch(ProductNotFoundedException ex){
+            return ResponseEntity.badRequest().body(ex.getMessage());
         } catch(Exception e){
             return ResponseEntity.badRequest().body("Произошла ошибка");
         }
@@ -40,9 +42,9 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity addProduct(@PathVariable String id, @RequestHeader("ammount") int ammount){
+    public ResponseEntity addProduct(@PathVariable String id, @RequestHeader("amount") int amount){
         try {
-            return  ResponseEntity.ok(productServise.addProduct(id,ammount));
+            return  ResponseEntity.ok(productServise.addProduct(id,amount));
         } catch(ProductNotFoundedException ex){
             return ResponseEntity.badRequest().body(ex.getMessage());
         }catch(Exception e){
@@ -57,7 +59,7 @@ public class ProductController {
         } catch(ProductNotFoundedException ex){
             return ResponseEntity.badRequest().body(ex.getMessage());
         }catch(Exception e){
-            return ResponseEntity.badRequest().body("Произошла ошибка");
+            return ResponseEntity.badRequest().body("Произошла ошибка" + e.getMessage());
         }
     }
 
@@ -81,8 +83,8 @@ public class ProductController {
         }
     }
 
-    @GetMapping("/hit")
-    public ResponseEntity getProductsHit(@RequestParam boolean hit){
+    @GetMapping("/hit/{hit}")
+    public ResponseEntity getProductsHit(@PathVariable boolean hit){
         try {
             return ResponseEntity.ok(productServise.getProductsHit(hit));
         } catch(Exception e){

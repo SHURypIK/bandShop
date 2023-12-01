@@ -12,7 +12,7 @@ public class ShopEntity {
     private int id;
     private String address;
     private String workTime;
-    private  String phone;
+    private String phone;
 
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "shop")
     private AdminEntity admin;
