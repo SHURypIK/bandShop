@@ -28,10 +28,9 @@ public class CartServise {
         if(!productRepo.existsById(product_id))
             throw new ProductNotFoundedException("Продукт не найден");
         ProductEntity product = productRepo.findById(product_id).get();
-        if(cart.getPrducts().contains(product))
+        if(cart.getProducts().containsKey(product))
             throw new ProductAlreadyExistException("Продукт уже добавлен в карзину");
-        cart.getPrducts().add(product);
-        cart.getAmounts().add(cart.getPrducts().indexOf(product),1);
+        cart.getProducts().put(product,1);
         cart.setTotalPrice(cart.getTotalPrice() + product.getPrice());
         cartRepo.save(cart);
         return Cart.toModel(cart);
@@ -41,8 +40,7 @@ public class CartServise {
         CartEntity cart = cartRepo.findByUserId(user_id);
         if(cart == null)
             throw new UserNotFoundException("Карзина не найдена");
-        cart.getAmounts().clear();
-        cart.getPrducts().clear();
+        cart.getProducts().clear();
         cart.setTotalPrice(0);
         return Cart.toModel(cart);
     }
@@ -54,11 +52,10 @@ public class CartServise {
         if(!productRepo.existsById(product_id))
             throw new ProductNotFoundedException("Продукт не найден");
         ProductEntity product = productRepo.findById(product_id).get();
-        if(!cart.getPrducts().contains(product))
+        if(!cart.getProducts().containsKey(product))
             throw new ProductNotFoundedException("Продукт не найден в каризне");
-        cart.setTotalPrice(cart.getTotalPrice() - product.getPrice()*cart.getAmounts().get(cart.getPrducts().indexOf(product)));
-        cart.getAmounts().remove(cart.getPrducts().indexOf(product));
-        cart.getPrducts().remove(productRepo.findById(product_id).get());
+        cart.setTotalPrice(cart.getTotalPrice() - product.getPrice()*cart.getProducts().get(product));
+        cart.getProducts().remove(product);
         cartRepo.save(cart);
         return Cart.toModel(cart);
     }
@@ -67,18 +64,20 @@ public class CartServise {
         CartEntity cart = cartRepo.findByUserId(user_id);
         if(cart == null)
             throw new UserNotFoundException("Карзина не найдена");
-        if(!cart.getPrducts().contains(productRepo.findById(product_id).get()))
+        if(!productRepo.existsById(product_id))
             throw new ProductNotFoundedException("Продукт не найден");
-        int index = cart.getPrducts().indexOf(productRepo.findById(product_id).get());
+        ProductEntity product = productRepo.findById(product_id).get();
+        if(!cart.getProducts().containsKey(product))
+            throw new ProductNotFoundedException("Продукт не найден");
         if(add){
-            cart.setTotalPrice(cart.getTotalPrice() + productRepo.findById(product_id).get().getPrice());
-            cart.getAmounts().set(index,  cart.getAmounts().get(index) + 1);
+            cart.setTotalPrice(cart.getTotalPrice() + product.getPrice());
+            cart.getProducts().put(product, cart.getProducts().get(product) + 1);
         }
         else {
-            if(cart.getAmounts().get(index) == 1)
+            if(cart.getProducts().get(product) == 1)
                 throw new ProductMinAmountException("Выбрано минимальное количество товаров");
-            cart.setTotalPrice(cart.getTotalPrice() - productRepo.findById(product_id).get().getPrice());
-            cart.getAmounts().set(index,  cart.getAmounts().get(index) - 1);
+            cart.setTotalPrice(cart.getTotalPrice() - product.getPrice());
+            cart.getProducts().put(product, cart.getProducts().get(product) - 1);
         }
         cartRepo.save(cart);
         return Cart.toModel(cart);

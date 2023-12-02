@@ -45,12 +45,14 @@ public class CartController {
     }
 
     @PutMapping("/delete")
-    public ResponseEntity deleteProductToCart(@RequestHeader("user_id") int user_id,
+    public ResponseEntity deleteProductFromoCart(@RequestHeader("user_id") int user_id,
                                               @RequestHeader("product_id") String product_id){
         try {
             return  ResponseEntity.ok(cartServise.deleteProductFromCart(user_id, product_id));
         }catch(UserNotFoundException exc){
             return ResponseEntity.badRequest().body(exc.getMessage());
+        }catch(ProductNotFoundedException exce){
+            return ResponseEntity.badRequest().body(exce.getMessage());
         }catch(Exception e){
             return ResponseEntity.badRequest().body("Произошла ошибка");
         }
@@ -62,13 +64,11 @@ public class CartController {
                                              @RequestParam boolean add){
         try {
             return  ResponseEntity.ok(cartServise.changeAmountInCart(user_id, product_id, add));
-        }catch(UserNotFoundException exc){
+        } catch(UserNotFoundException exc){
             return ResponseEntity.badRequest().body(exc.getMessage());
-        }
-        catch(ProductNotFoundedException ex){
+        } catch(ProductNotFoundedException ex){
             return ResponseEntity.badRequest().body(ex.getMessage());
-        }
-        catch(ProductMinAmountException exce){
+        } catch(ProductMinAmountException exce){
             return ResponseEntity.badRequest().body(exce.getMessage());
         }catch(Exception e){
             return ResponseEntity.badRequest().body("Произошла ошибка");

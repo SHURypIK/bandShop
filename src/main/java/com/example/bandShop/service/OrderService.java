@@ -36,11 +36,13 @@ public class OrderService {
         if(shop == null)
             throw  new ShopNotFoundedException("Магазин не найден");
         UserEntity user = userRepo.findById(user_id).get();
-        int i;
-        for(i = 0; i < cart.getPrducts().size(); i++){
-            if(cart.getPrducts().get(i).getStrorage() < cart.getAmounts().get(i))
+        cart.getProducts().forEach((key,value)->{if(key.getStrorage() < value)
+            try {
                 throw new ProductNotEnoughException("На складе не достаточно продуктов");
-        }
+            } catch (ProductNotEnoughException e) {
+                throw new RuntimeException(e);
+            }
+        });//проверить на работу
         order.setShop(shop);
         order.setCart(cart);
         user.getOrderHistory().add(order);

@@ -12,8 +12,7 @@ public class Cart {
 
     public static Cart toModel(CartEntity entity){
         Cart model = new Cart();
-        for(int i = 0; i< entity.getPrducts().size(); i++)
-            model.products.put(ProductCard.toModel(entity.getPrducts().get(i)), entity.getAmounts().get(i));
+        entity.getProducts().forEach((key,value)->model.products.put(ProductCard.toModel(key), value));
         model.setTotalPrice(entity.getTotalPrice());
         return model;
     }

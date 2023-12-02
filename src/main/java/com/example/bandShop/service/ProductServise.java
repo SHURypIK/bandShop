@@ -53,6 +53,7 @@ public class ProductServise {
 
         if(productRepo.existsById(product.getId())){
             product.setReviews(productRepo.findById(product.getId()).get().getReviews());
+            product.setStrorage(productRepo.findById(product.getId()).get().getStrorage());
             productRepo.save(product);
             return Product.toModel(product);
         }
