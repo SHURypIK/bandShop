@@ -37,8 +37,8 @@ public class CartController {
     public ResponseEntity cleanCart(@RequestHeader("user_id") int user_id){
         try {
             return  ResponseEntity.ok(cartServise.cleanCart(user_id));
-        }catch(UserNotFoundException exc){
-            return ResponseEntity.badRequest().body(exc.getMessage());
+        }catch(UserNotFoundException ex){
+            return ResponseEntity.badRequest().body(ex.getMessage());
         }catch(Exception e){
             return ResponseEntity.badRequest().body("Произошла ошибка");
         }
@@ -51,6 +51,9 @@ public class CartController {
             return  ResponseEntity.ok(cartServise.deleteProductFromCart(user_id, product_id));
         }catch(UserNotFoundException exc){
             return ResponseEntity.badRequest().body(exc.getMessage());
+        }
+        catch(ProductNotFoundedException ex){
+            return ResponseEntity.badRequest().body(ex.getMessage());
         }catch(Exception e){
             return ResponseEntity.badRequest().body("Произошла ошибка");
         }

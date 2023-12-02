@@ -1,7 +1,6 @@
 package com.example.bandShop.service;
 
 import com.example.bandShop.entity.CartEntity;
-import com.example.bandShop.entity.ProductEntity;
 import com.example.bandShop.entity.UserEntity;
 import com.example.bandShop.exception.PasswordUncorectException;
 import com.example.bandShop.exception.ProductNotFoundedException;
@@ -11,6 +10,7 @@ import com.example.bandShop.model.OrdersHistory;
 import com.example.bandShop.model.PersonalInformation;
 import com.example.bandShop.model.User;
 import com.example.bandShop.model.WishList;
+import com.example.bandShop.repository.CartRepo;
 import com.example.bandShop.repository.ProductRepo;
 import com.example.bandShop.repository.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,17 +26,22 @@ public class UserService {
     private UserRepo userRepo;
     @Autowired
     private ProductRepo productRepo;
+    @Autowired
+    private CartRepo cartRepo;
 
     public UserEntity registration(UserEntity user) throws UserAlreadyExistException {
         UserEntity usere = userRepo.findByLogin(user.getLogin());
         if (usere != null){
             throw new UserAlreadyExistException("Пользователь с таким логином уже существует");
         }
-        user.setCart(new CartEntity());
+        CartEntity cart = new CartEntity();
+        user.setCart(cart);
         user.setOrderHistory(new ArrayList<>());
         user.setReviews(new ArrayList<>());
         user.setWishlist(new ArrayList<>());
-        return userRepo.save(user);
+        userRepo.save(user);
+        cartRepo.save(cart);
+        return user;
     }
 
     public User getOne(Integer id) throws UserNotFoundException {

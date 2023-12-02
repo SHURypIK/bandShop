@@ -67,17 +67,20 @@ public class CartServise {
         CartEntity cart = cartRepo.findByUserId(user_id);
         if(cart == null)
             throw new UserNotFoundException("Карзина не найдена");
-        if(!cart.getPrducts().contains(productRepo.findById(product_id).get()))
+        if(!productRepo.existsById(product_id))
             throw new ProductNotFoundedException("Продукт не найден");
-        int index = cart.getPrducts().indexOf(productRepo.findById(product_id).get());
+        ProductEntity product = productRepo.findById(product_id).get();
+        if(!cart.getPrducts().contains(productRepo.findById(product_id).get()))
+            throw new ProductNotFoundedException("Продукт не найден в карзине");
+        int index = cart.getPrducts().indexOf(product);
         if(add){
-            cart.setTotalPrice(cart.getTotalPrice() + productRepo.findById(product_id).get().getPrice());
+            cart.setTotalPrice(cart.getTotalPrice() + product.getPrice());
             cart.getAmounts().set(index,  cart.getAmounts().get(index) + 1);
         }
         else {
             if(cart.getAmounts().get(index) == 1)
                 throw new ProductMinAmountException("Выбрано минимальное количество товаров");
-            cart.setTotalPrice(cart.getTotalPrice() - productRepo.findById(product_id).get().getPrice());
+            cart.setTotalPrice(cart.getTotalPrice() - product.getPrice());
             cart.getAmounts().set(index,  cart.getAmounts().get(index) - 1);
         }
         cartRepo.save(cart);
