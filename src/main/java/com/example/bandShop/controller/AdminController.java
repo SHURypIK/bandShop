@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/admin")
+@CrossOrigin(origins = {"http://127.0.0.1:5500"})
 public class AdminController {
 
         @Autowired
@@ -42,7 +43,7 @@ public class AdminController {
         }
 
         @DeleteMapping("/{id}")
-        public ResponseEntity deleteAdmoin(@PathVariable Integer id){
+        public ResponseEntity deleteAdmin(@PathVariable Integer id){
                 try {
                         return  ResponseEntity.ok(adminService.delete(id));
                 } catch(UserNotFoundException ex){
@@ -52,7 +53,7 @@ public class AdminController {
                 }
         }
 
-        @GetMapping("/enter")
+        @PutMapping("/enter")
         public ResponseEntity enterAdmin(@RequestBody AdminEntity admin){
                 try {
                         return  ResponseEntity.ok(adminService.enter(admin));
@@ -88,5 +89,23 @@ public class AdminController {
                 }
         }
 
+        @GetMapping("/all")
+        public ResponseEntity getAll(){
+                try {
+                        return  ResponseEntity.ok(adminService.getAll());
+                }catch(Exception e){
+                        return ResponseEntity.badRequest().body("Произошла ошибка"+ e.getMessage());
+                }
+        }
+        @GetMapping("/findshop/{id}")
+        public ResponseEntity getOneShop(@PathVariable int id){
+                try {
+                        return  ResponseEntity.ok(adminService.getOne(id));
+                }catch(ShopNotFoundedException ex){
+                        return ResponseEntity.badRequest().body(ex.getMessage());
+                }catch(Exception e){
+                        return ResponseEntity.badRequest().body("Произошла ошибка"+ e.getMessage());
+                }
+        }
 
 }

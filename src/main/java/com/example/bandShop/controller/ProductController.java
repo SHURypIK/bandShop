@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/products")
+@CrossOrigin(origins = {"http://127.0.0.1:5500"})
 public class ProductController {
 
     @Autowired
@@ -29,14 +30,14 @@ public class ProductController {
     }
 
 
-    @DeleteMapping("/{id}")
+    @PutMapping("/delete/{id}")
     public ResponseEntity deleteProduct(@PathVariable String id){
         try {
             return  ResponseEntity.ok(productServise.delete(id));
         } catch(ProductNotFoundedException ex){
             return ResponseEntity.badRequest().body(ex.getMessage());
         } catch(Exception e){
-            return ResponseEntity.badRequest().body("Произошла ошибка");
+            return ResponseEntity.badRequest().body("Произошла ошибка" + e.getMessage());
         }
 
     }
@@ -58,7 +59,10 @@ public class ProductController {
             return  ResponseEntity.ok(productServise.updateProduct(product));
         } catch(ProductNotFoundedException ex){
             return ResponseEntity.badRequest().body(ex.getMessage());
-        }catch(Exception e){
+        } catch(ProductAlreadyExistException exc){
+        return ResponseEntity.badRequest().body(exc.getMessage());
+        }
+        catch(Exception e){
             return ResponseEntity.badRequest().body("Произошла ошибка" + e.getMessage());
         }
     }

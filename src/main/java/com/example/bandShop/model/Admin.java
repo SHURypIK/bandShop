@@ -8,6 +8,16 @@ public class Admin {
     private String role;
     private int id;
 
+    public int getShop() {
+        return shop;
+    }
+
+    public void setShop(int shop) {
+        this.shop = shop;
+    }
+
+    private int shop;
+
 
 
     public static Admin toModel(AdminEntity entity){
@@ -15,6 +25,9 @@ public class Admin {
         model.setPassword(entity.getPassword());
         model.setRole(entity.getRole());
         model.setId(entity.getId());
+        if(entity.getShop() != null)
+        model.setShop(entity.getShop().getId());
+        else model.setShop(0);
         return model;
     }
 

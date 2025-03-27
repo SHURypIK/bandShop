@@ -43,7 +43,8 @@ public class ReviewServise {
     public Review delete(int user_id, String product_id) throws ReviewNotFoundedException {
         if(reviewRepo.findByProductIdAndUserId(product_id,user_id) == null)
             throw new ReviewNotFoundedException("Отзыв не найден");
-        reviewRepo.deleteByProductIdAndUserId(product_id,user_id);
+        ReviewEntity review = reviewRepo.findByProductIdAndUserId(product_id,user_id);
+        reviewRepo.deleteById(review.getId());
         return new Review();
     }
 
@@ -96,4 +97,8 @@ public class ReviewServise {
         return reviews;
     }
 
+    public List<Review> getAll() throws UserNotFoundException {
+        List<Review> reviews = getReviews();
+        return reviews;
+    }
 }

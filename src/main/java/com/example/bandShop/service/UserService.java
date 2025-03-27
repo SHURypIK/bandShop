@@ -40,14 +40,15 @@ public class UserService {
         user.setReviews(new ArrayList<>());
         user.setWishlist(new ArrayList<>());
         userRepo.save(user);
+        cart.setUser(user);
         cartRepo.save(cart);
         return user;
     }
 
-    public User getOne(Integer id) throws UserNotFoundException {
+    public PersonalInformation getOne(Integer id) throws UserNotFoundException {
         if(!userRepo.existsById(id))
             throw new UserNotFoundException("Пользователь не был найден");
-        return User.toModel(userRepo.findById(id).get());
+        return PersonalInformation.toModel(userRepo.findById(id).get());
     }
 
     public User delete(Integer id) throws UserNotFoundException {

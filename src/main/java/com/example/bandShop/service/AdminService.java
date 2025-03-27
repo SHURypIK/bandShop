@@ -45,7 +45,7 @@ public class AdminService {
         if(!adminRepo.existsById(admin.getId()))
             throw new UserNotFoundException("Пользователь не был найден");
         AdminEntity admine = adminRepo.findById(admin.getId()).get();
-        if(!admine.getPassword().equals(admin.getPassword()))
+        if(!admin.getPassword().equals(admine.getPassword()))
             throw new PasswordUncorectException("Не верный пароль");
         return Admin.toModel(admine);
     }
@@ -53,6 +53,9 @@ public class AdminService {
     public Admin delete(Integer id) throws UserNotFoundException {
         if(!adminRepo.existsById(id))
             throw  new UserNotFoundException("Пользователь не найден");
+        if(shopRepo.findByAdminId(id) != null){
+        shopRepo.findByAdminId(id).setAdmin(null);
+        shopRepo.save(shopRepo.findByAdminId(id));}
         adminRepo.deleteById(id);
         return new Admin();
     }
@@ -74,10 +77,26 @@ public class AdminService {
         List<AdminEntity> adminEntities = (List<AdminEntity>) adminRepo.findAll();
         List<Admin> admins = new ArrayList<>();
         for(AdminEntity ae : adminEntities){
-            if(ae.getRole().equals("управляющий") && ae.getShop() == null)
+            if(ae.getRole() != null && ae.getShop() == null)
             admins.add(Admin.toModel(ae));
         }
         return admins;
+    }
+
+    public List<Admin> getAll() {
+        List<AdminEntity> adminEntities = (List<AdminEntity>) adminRepo.findAll();
+        List<Admin> admins = new ArrayList<>();
+        for(AdminEntity ae : adminEntities){
+            if(ae.getRole() != null)
+                admins.add(Admin.toModel(ae));
+        }
+        return admins;
+    }
+    public Shop getOne(int id) throws ShopNotFoundedException {
+        if (shopRepo.findByAdminId(id) == null){
+            throw new ShopNotFoundedException("Магазин не найден");
+        }
+        return Shop.toModel(shopRepo.findByAdminId(id));
     }
 
 }

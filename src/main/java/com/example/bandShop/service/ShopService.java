@@ -4,10 +4,7 @@ package com.example.bandShop.service;
 import com.example.bandShop.entity.AdminEntity;
 import com.example.bandShop.entity.OrderEntity;
 import com.example.bandShop.entity.ShopEntity;
-import com.example.bandShop.exception.OrdersExcistException;
-import com.example.bandShop.exception.ShopAlredyExistException;
-import com.example.bandShop.exception.ShopNotFoundedException;
-import com.example.bandShop.exception.UserNotFoundException;
+import com.example.bandShop.exception.*;
 import com.example.bandShop.model.Admin;
 import com.example.bandShop.model.Order;
 import com.example.bandShop.model.Shop;
@@ -36,9 +33,11 @@ public class ShopService {
         return shopRepo.save(shop);
     }
 
-    public Shop delete(Integer id) throws ShopNotFoundedException {
+    public Shop delete(Integer id) throws ShopNotFoundedException, OrdersNotComplitedEception {
         if(!shopRepo.existsById(id))
             throw  new ShopNotFoundedException("Магазин не найден");
+        if(!shopRepo.findById(id).get().getOrders().isEmpty())
+            throw new OrdersNotComplitedEception("Заказы не выполнены");
         shopRepo.deleteById(id);
         return new Shop();
     }
@@ -50,6 +49,7 @@ public class ShopService {
         ShopEntity shop = shopRepo.findById(shop_id).get();
         List<Order> orders = new ArrayList<>();
         for(OrderEntity oe : shop.getOrders())
+            if(!oe.getComplitied().equals("готов"))
             orders.add(Order.toModel(oe));
         return orders;
     }
@@ -75,6 +75,7 @@ public class ShopService {
             if(!shopRepo.findById(shop.getId()).get().getOrders().isEmpty())
                 throw new OrdersExcistException("Нельзя изменить магазин пока не выполнены все заказы");
             shopRepo.save(shop);
+            shop.setAdmin(shopRepo.findById(shop.getId()).get().getAdmin());
             return Shop.toModel(shop);
         }
         throw new ShopNotFoundedException("Магазин не найден");

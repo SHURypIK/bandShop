@@ -3,6 +3,8 @@ package com.example.bandShop.entity;
 import jakarta.persistence.*;
 
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class OrderEntity {
@@ -11,16 +13,35 @@ public class OrderEntity {
     private int id;
     private String complitied;
     private Date date;
+    private String userEmail;
 
 
-    @OneToOne
-    private CartEntity cart;
+    private List<Integer> amounts = new ArrayList<>();
+
+    @ManyToMany
+    private List<ProductEntity> prducts = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "shopId")
     private  ShopEntity shop;
 
     public OrderEntity() {
+    }
+
+    public List<Integer> getAmounts() {
+        return amounts;
+    }
+
+    public void setAmounts(List<Integer> amounts) {
+        this.amounts = amounts;
+    }
+
+    public List<ProductEntity> getPrducts() {
+        return prducts;
+    }
+
+    public void setPrducts(List<ProductEntity> prducts) {
+        this.prducts = prducts;
     }
 
     public int getId() {
@@ -47,13 +68,6 @@ public class OrderEntity {
         this.complitied = complitied;
     }
 
-    public CartEntity getCart() {
-        return cart;
-    }
-
-    public void setCart(CartEntity cart) {
-        this.cart = cart;
-    }
 
     public ShopEntity getShop() {
         return shop;
@@ -61,5 +75,13 @@ public class OrderEntity {
 
     public void setShop(ShopEntity shop) {
         this.shop = shop;
+    }
+
+    public String getUserEmail() {
+        return userEmail;
+    }
+
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
     }
 }

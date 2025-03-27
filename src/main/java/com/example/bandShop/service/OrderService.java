@@ -21,12 +21,14 @@ public class OrderService {
     private ShopRepo shopRepo;
     @Autowired
     private UserRepo userRepo;
+    @Autowired
+    private CartServise cartServise;
 
 
 
-    public OrderEntity createOrder(OrderEntity order,int user_id,int shop_id) throws UserNotFoundException, ShopNotFoundedException, CartEmptyException, ProductNotEnoughException {
+    public Order createOrder(OrderEntity order,int user_id,int shop_id) throws UserNotFoundException, ShopNotFoundedException, CartEmptyException, ProductNotEnoughException {
         CartEntity cart = cartRepo.findByUserId(user_id);
-        if (cart != null){
+        if (cart == null){
             throw new UserNotFoundException("Карзина не найдена");
         }
         if (cart.getTotalPrice() == 0){
@@ -41,27 +43,34 @@ public class OrderService {
             if(cart.getPrducts().get(i).getStrorage() < cart.getAmounts().get(i))
                 throw new ProductNotEnoughException("На складе не достаточно продуктов");
         }
+        for(i = 0; i < cart.getPrducts().size(); i++)
+            cart.getPrducts().get(i).setStrorage(cart.getPrducts().get(i).getStrorage()- cart.getAmounts().get(i));
         order.setShop(shop);
-        order.setCart(cart);
+        order.setUserEmail(user.getEmail());
+        order.getPrducts().addAll(cart.getPrducts());
+        order.getAmounts().addAll(cart.getAmounts());
         user.getOrderHistory().add(order);
         userRepo.save(user);
-        return orderRepo.save(order);
+        cartServise.cleanCart(user_id);
+        cartRepo.save(cart);
+        orderRepo.save(order);
+        return Order.toModel(order);
     }
 
     public Order getOne(Integer id) throws OrderNotFoundedException {
-        OrderEntity order = orderRepo.findById(id).get();
-        if(order == null)
+        if(!orderRepo.existsById(id))
            throw new OrderNotFoundedException("Заказ не найден");
-        return Order.toModel(order);
+        return Order.toModel(orderRepo.findById(id).get());
     }
 
-    public Order changeStatus(OrderEntity order, String status) throws OrderNotFoundedException {
-        if(orderRepo.findById(order.getId()).isPresent())
+    public Order changeStatus(int id) throws OrderNotFoundedException {
+        if(!orderRepo.existsById(id))
             throw new OrderNotFoundedException("Заказ не найден");
-        order.setComplitied(status);
-        order.getShop().getOrders().remove(order);
-        shopRepo.save(order.getShop());
-        orderRepo.save(order);
-        return Order.toModel(order);
+        OrderEntity ordere = orderRepo.findById(id).get();
+        ordere.setComplitied("готов");
+        ordere.getShop().getOrders().remove(ordere);
+        shopRepo.save(ordere.getShop());
+        orderRepo.save(ordere);
+        return Order.toModel(ordere);
     }
 }

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/orders")
+@CrossOrigin(origins = {"http://127.0.0.1:5500"})
 public class OrderController {
 
     @Autowired
@@ -33,7 +34,7 @@ public class OrderController {
         } catch(ProductNotEnoughException excep){
             return ResponseEntity.badRequest().body(excep.getMessage());
         }catch(Exception e){
-            return ResponseEntity.badRequest().body("Произошла ошибка");
+            return ResponseEntity.badRequest().body("Произошла ошибка" + e.getMessage());
         }
     }
 
@@ -48,15 +49,14 @@ public class OrderController {
         }
     }
 
-    @PutMapping("/status")
-    public ResponseEntity changeStatus(@RequestBody OrderEntity order,
-                                       @RequestHeader("status") String status){
+    @PutMapping("/status/{id}")
+    public ResponseEntity changeStatus(@PathVariable Integer id){
         try {
-            return  ResponseEntity.ok(orderService.changeStatus(order, status));
+            return  ResponseEntity.ok(orderService.changeStatus(id));
         }catch(OrderNotFoundedException ex){
             return ResponseEntity.badRequest().body(ex.getMessage());
         } catch(Exception e){
-            return ResponseEntity.badRequest().body("Произошла ошибка");
+            return ResponseEntity.badRequest().body("Произошла ошибка"+e.getMessage());
         }
     }
 

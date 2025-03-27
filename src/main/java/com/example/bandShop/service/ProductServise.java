@@ -27,12 +27,19 @@ public class ProductServise {
 
         if(!productRepo.existsById(id))
             throw  new ProductNotFoundedException("Проукт не найден");
-        productRepo.deleteById(id);
+        ProductEntity product = productRepo.findById(id).get();
+        product.setStrorage(0);
+        product.setTitle("Удалено");
+        product.setHit(false);
+        product.setDescription(null);
+        product.setPictures(null);
+        product.setPrice(null);
+        productRepo.save(product);
         return new Product();
     }
 
     public ProductEntity createProduct (ProductEntity product) throws ProductAlreadyExistException {
-        if (productRepo.existsById(product.getId()))
+        if (productRepo.existsById(product.getId()) || productRepo.findByTitle(product.getTitle()) != null)
             throw new ProductAlreadyExistException("Продукт уже существует");
         product.setStrorage(0);
         product.setReviews(new ArrayList<>());
@@ -49,10 +56,15 @@ public class ProductServise {
         return Product.toModel(product);
     }
 
-    public Product updateProduct (ProductEntity product) throws ProductNotFoundedException {
-
+    public Product updateProduct (ProductEntity product) throws ProductNotFoundedException, ProductAlreadyExistException {
+        String id = product.getId();
+        String title = product.getTitle();
         if(productRepo.existsById(product.getId())){
+            if(productRepo.findByTitle(title) != null)
+                if(productRepo.findByTitle(title).getId().equals(id))
+                    throw  new ProductAlreadyExistException("Название занято");
             product.setReviews(productRepo.findById(product.getId()).get().getReviews());
+            product.setStrorage(productRepo.findById(product.getId()).get().getStrorage());
             productRepo.save(product);
             return Product.toModel(product);
         }
@@ -69,6 +81,8 @@ public class ProductServise {
         List<ProductEntity> productEntities = (List<ProductEntity>) productRepo.findAll();
         List<ProductCard> products = new ArrayList<>();
         for(ProductEntity pe: productEntities){
+            if(pe.getTitle().equals("Удалено"))
+                continue;
             products.add(ProductCard.toModel(pe));
         }
         return products;
@@ -78,6 +92,8 @@ public class ProductServise {
         List<ProductEntity> productEntities = (List<ProductEntity>) productRepo.findAll();
         List<ProductCard> products = new ArrayList<>();
         for(ProductEntity pe: productEntities){
+            if(pe.getTitle().equals("Удалено"))
+                continue;
             if(pe.isHit() == hit)
                 products.add(ProductCard.toModel(pe));
         }
@@ -109,9 +125,7 @@ public class ProductServise {
         List<ProductCard> sortProducts = new ArrayList<>();
         for(ProductCard pc : products)
             if(pc.isHit())
-                sortProducts.add(0,pc);
-            else
-               sortProducts.add(pc);
+                sortProducts.add(pc);
             return sortProducts;
     }
 

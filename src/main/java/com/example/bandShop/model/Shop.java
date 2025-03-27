@@ -18,7 +18,7 @@ public class Shop {
         model.setId(entity.getId());
         model.setWorkTime(entity.getWorkTime());
         if(entity.getAdmin() != null)
-            model.setAdmin(entity.getAdmin().getRole() + " " +entity.getAdmin().getId());
+            model.setAdmin(Integer.toString(entity.getAdmin().getId()));
         return model;
     }
 

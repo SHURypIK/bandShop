@@ -44,6 +44,7 @@ public class CartServise {
         cart.getAmounts().clear();
         cart.getPrducts().clear();
         cart.setTotalPrice(0);
+        cartRepo.save(cart);
         return Cart.toModel(cart);
     }
 

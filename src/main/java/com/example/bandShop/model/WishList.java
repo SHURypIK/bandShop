@@ -7,22 +7,22 @@ import java.util.stream.Collectors;
 
 public class WishList {
 
-    private List<Product> wishlist;
+    private List<ProductCard> wishlist;
 
     public static WishList toModel(UserEntity entity){
         WishList model = new WishList();
-        model.setWishlist(entity.getWishlist().stream().map(Product :: toModel).collect(Collectors.toList()));
+        model.setWishlist(entity.getWishlist().stream().map(ProductCard :: toModel).collect(Collectors.toList()));
         return model;
     }
 
     public WishList() {
     }
 
-    public List<Product> getWishlist() {
+    public List<ProductCard> getWishlist() {
         return wishlist;
     }
 
-    public void setWishlist(List<Product> wishlist) {
+    public void setWishlist(List<ProductCard> wishlist) {
         this.wishlist = wishlist;
     }
 }

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/reviews")
+@CrossOrigin(origins = {"http://127.0.0.1:5500"})
 public class ReviewController {
 
     @Autowired
@@ -45,7 +46,7 @@ public class ReviewController {
         }catch(ReviewNotFoundedException ex){
             return ResponseEntity.badRequest().body(ex.getMessage());
         } catch(Exception e){
-            return ResponseEntity.badRequest().body("Произошла ошибка");
+            return ResponseEntity.badRequest().body("Произошла ошибка" + e.getMessage());
         }
     }
 
@@ -93,6 +94,15 @@ public class ReviewController {
             return ResponseEntity.badRequest().body(ex.getMessage());
         } catch(Exception e){
             return ResponseEntity.badRequest().body("Произошла ошибка" + e.getMessage());
+        }
+    }    @GetMapping("/all")
+    public ResponseEntity getReviewsALL(){
+        try {
+            return ResponseEntity.ok(reviewServise.getAll());
+        }catch(UserNotFoundException ex){
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        } catch(Exception e){
+            return ResponseEntity.badRequest().body("Произошла ошибка");
         }
     }
 }

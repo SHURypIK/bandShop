@@ -10,6 +10,8 @@ public class Review {
     private String text;
     private String user;
     private String product;
+    private int idu;
+    private String idp;
 
     public static Review toModel(ReviewEntity entity){
         Review model = new Review();
@@ -17,7 +19,25 @@ public class Review {
         model.setText(entity.getText());
         model.setUser(entity.getUser().getLogin());
         model.setProduct(entity.getProduct().getTitle());
+        model.setIdu(entity.getUser().getId());
+        model.setIdp(entity.getProduct().getId());
         return model;
+    }
+
+    public int getIdu() {
+        return idu;
+    }
+
+    public void setIdu(int idu) {
+        this.idu = idu;
+    }
+
+    public String getIdp() {
+        return idp;
+    }
+
+    public void setIdp(String idp) {
+        this.idp = idp;
     }
 
     public Review() {

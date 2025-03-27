@@ -2,6 +2,7 @@ package com.example.bandShop.entity;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -18,10 +19,10 @@ public class CartEntity {
 //    private HashMap<ProductEntity, Integer> products;
 
 
-    private List<Integer> amounts;
+    private List<Integer> amounts = new ArrayList<>();
 
-    @OneToMany
-    private List<ProductEntity> prducts;
+    @ManyToMany
+    private List<ProductEntity> prducts = new ArrayList<>();
 
 
     @OneToOne

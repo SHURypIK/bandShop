@@ -2,6 +2,7 @@ package com.example.bandShop.controller;
 
 import com.example.bandShop.entity.ShopEntity;
 import com.example.bandShop.exception.OrdersExcistException;
+import com.example.bandShop.exception.OrdersNotComplitedEception;
 import com.example.bandShop.exception.ShopAlredyExistException;
 import com.example.bandShop.exception.ShopNotFoundedException;
 import com.example.bandShop.service.ShopService;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/shop")
+@CrossOrigin(origins = {"http://127.0.0.1:5500"})
 public class ShopController {
 
     @Autowired
@@ -35,8 +37,10 @@ public class ShopController {
             return  ResponseEntity.ok(shopService.delete(id));
         }catch(ShopNotFoundedException ex){
             return ResponseEntity.badRequest().body(ex.getMessage());
+        } catch(OrdersNotComplitedEception ex){
+            return ResponseEntity.badRequest().body(ex.getMessage());
         } catch(Exception e){
-            return ResponseEntity.badRequest().body("Произошла ошибка");
+            return ResponseEntity.badRequest().body("Произошла ошибка" + e.getMessage());
         }
     }
 

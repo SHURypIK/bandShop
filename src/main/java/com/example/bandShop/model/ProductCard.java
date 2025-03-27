@@ -24,11 +24,17 @@ public class ProductCard {
             model.setStorage("Нет на складе");
         double avgGrade = 0;
         int amount = 0;
+        if (entity.getReviews().isEmpty()){
+            model.setAvgGrade(-1);
+        }else{
         for(ReviewEntity r : entity.getReviews()){
             avgGrade += r.getGrade();
             amount++;
         }
-        model.setAvgGrade(avgGrade/amount);
+        avgGrade /= amount;
+        avgGrade*=10;
+        avgGrade=Math.round(avgGrade);
+        model.setAvgGrade(avgGrade/10);}
         model.setTitle(entity.getTitle());
         model.setPrice(entity.getPrice());
         model.setPictures(entity.getPictures().get(0));

@@ -10,8 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * @author shurik
+ */
 @RestController
 @RequestMapping("/cart")
+@CrossOrigin(origins = {"http://127.0.0.1:5500"})
 public class CartController {
 
     @Autowired
@@ -29,7 +33,7 @@ public class CartController {
         }catch(UserNotFoundException exc){
             return ResponseEntity.badRequest().body(exc.getMessage());
         }catch(Exception e){
-            return ResponseEntity.badRequest().body("Произошла ошибка");
+            return ResponseEntity.badRequest().body("Произошла ошибка" + e.getMessage());
         }
     }
 
@@ -45,7 +49,7 @@ public class CartController {
     }
 
     @PutMapping("/delete")
-    public ResponseEntity deleteProductToCart(@RequestHeader("user_id") int user_id,
+    public ResponseEntity deleteProductFromCart(@RequestHeader("user_id") int user_id,
                                               @RequestHeader("product_id") String product_id){
         try {
             return  ResponseEntity.ok(cartServise.deleteProductFromCart(user_id, product_id));

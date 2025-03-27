@@ -1,6 +1,5 @@
 package com.example.bandShop.controller;
 
-import com.example.bandShop.entity.ProductEntity;
 import com.example.bandShop.exception.PasswordUncorectException;
 import com.example.bandShop.exception.ProductNotFoundedException;
 import com.example.bandShop.exception.UserAlreadyExistException;
@@ -15,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 
 @RestController
 @RequestMapping("/users")
+@CrossOrigin(origins = {"http://127.0.0.1:5500"})
 public class UserController {
 
     @Autowired
@@ -65,7 +65,7 @@ public class UserController {
         }
     }
 
-    @GetMapping("/enter")
+    @PutMapping("/enter")
     public ResponseEntity enterUser(@RequestBody UserEntity user){
         try {
             return  ResponseEntity.ok(userService.enter(user));
